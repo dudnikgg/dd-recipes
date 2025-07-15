@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1,
+    "name": "Denys Dudnik",
+    "email": "dudnik.gg@gmail.com",
+    "emailVerified": true,
+    "image": "https://avatars.githubusercontent.com/u/8949626?v=4"
+  },
+  {
+    "id": 2,
+    "name": "Olena Bulat",
+    "email": "amelia.sander@gmail.com",
+    "emailVerified": true
+  }
+]

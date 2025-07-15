@@ -1,1 +1,75 @@
 @import "tailwindcss";
+
+@plugin "daisyui" {
+  themes:
+    dracula --prefersdark,
+    nord --preferslight;
+}
+
+@layer base {
+  h1 {
+    font-size: var(--text-4xl);
+  }
+
+  h2 {
+    font-size: var(--text-2xl);
+  }
+
+  h3 {
+    font-size: var(--text-xl);
+  }
+}
+
+@utility btn {
+  @apply rounded-none;
+}
+
+@utility select {
+  @apply rounded-none;
+  --select-color: var(--border-base-content);
+}
+
+@utility textarea {
+  @apply rounded-none;
+  --input-color: var(--border-base-content);
+}
+
+@utility input {
+  @apply rounded-none;
+  --input-color: var(--border-base-content);
+}
+
+@for $i from 0 through 5 {
+  .sidebar-listItem:nth-child(n + #{$i}) {
+    animation-delay: $i * 0.2s;
+  }
+}
+
+@theme {
+  --animate-fade-in-item: fade-in-item 0.6s forwards;
+
+  @keyframes fade-in-item {
+    100% {
+      opacity: 1;
+      transform: translatex(0px);
+    }
+  }
+}
+
+/* Multiselect */
+.multiselect .multiselect__tags {
+  @apply bg-transparent rounded-none;
+}
+
+.multiselect .multiselect__single,
+.multiselect .multiselect__input {
+  @apply bg-transparent text-sm text-base-content;
+}
+
+.multiselect .multiselect__content-wrapper {
+  @apply bg-base-200 rounded-none text-sm text-base-content;
+}
+
+.multiselect .multiselect__option--highlight.multiselect__option {
+  @apply bg-accent text-black after:bg-accent;
+}

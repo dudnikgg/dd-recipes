@@ -1,8 +1,9 @@
 <script setup lang="ts">
+definePageMeta({
+  layout: "dashboard",
+});
 </script>
 
 <template>
-  <NuxtLayout>
-    <NuxtPage />
-  </NuxtLayout>
+  <NuxtPage />
 </template>
