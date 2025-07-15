@@ -13,7 +13,7 @@ await authStore.init();
 
     <footer class="footer sm:footer-horizontal footer-center bg-base-300 text-base-content p-4">
       <aside>
-        <p>Copyright © {{ new Date().getFullYear() }} - Denys Dudnik &lt;dudnik.gg@gmail.com&gt; </p>
+        <p>Copyright © {{ new Date().getFullYear() }} - Denys Dudnik &lt;<a href="mailto:dudnik.gg@gmail.com">dudnik.gg@gmail.com</a>&gt; </p>
       </aside>
     </footer>
   </div>

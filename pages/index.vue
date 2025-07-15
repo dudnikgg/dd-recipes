@@ -104,9 +104,9 @@ function onClick() {
 
 <template>
   <div
-    class="hero w-full"
+    class="hero relative w-full"
   >
-    <canvas ref="starsCanvas" class="fixed inset-0 z-[-1] block bg-[#1e1f29] size-full" />
+    <canvas ref="starsCanvas" class="fixed inset-0 z-[-1] block bg-base-300  size-full" />
 
     <div class="hero-content text-base-content text-center container mx-auto">
       <div class="max-w-2xl flex">
