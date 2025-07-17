@@ -38,7 +38,7 @@
     "drizzle-zod": "^0.7.1",
     "eslint": "^9.29.0",
     "gsap": "^3.13.0",
-    "nuxt": "^3.17.5",
+    "nuxt": "^4.0.0",
     "nuxt-csurf": "1.6.5",
     "nuxt-typed-router": "4.0.1",
     "pinia": "^3.0.3",

@@ -1,12 +1,4 @@
-import type { UserWithId } from "./auth";
-import type { SelectRecipeWithIngredients } from "./db/schema";
-
-declare module "h3" {
-  // eslint-disable-next-line ts/consistent-type-definitions
-  interface H3EventContext {
-    user?: UserWithId;
-  }
-}
+import type { SelectRecipeWithIngredients } from "~~/lib/db/schema";
 
 export enum MeasurementUnit {
   pcs = "pcs",

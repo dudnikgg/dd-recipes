@@ -1,7 +1,7 @@
-import { findRecipeByName, updateRecipeBySlug } from "~/lib/db/queries/recipe";
-import { InsertRecipeWithIngredientsSchema } from "~/lib/db/schema";
-import defineAuthenticatedEventHandler from "~/utils/define-authenticated-event-handler";
-import sendZodError from "~/utils/zod-error";
+import { findRecipeByName, updateRecipeBySlug } from "~~/lib/db/queries/recipe";
+import { InsertRecipeWithIngredientsSchema } from "~~/lib/db/schema";
+import defineAuthenticatedEventHandler from "~~/server/utils/define-authenticated-event-handler";
+import sendZodError from "~~/server/utils/zod-error";
 
 export default defineAuthenticatedEventHandler(async (event) => {
   const slug = getRouterParam(event, "slug") as string;

@@ -1,5 +1,5 @@
-import { findRecipesWithIngredients } from "~/lib/db/queries/recipe";
-import defineAuthenticatedEventHandler from "~/utils/define-authenticated-event-handler";
+import { findRecipesWithIngredients } from "~~/lib/db/queries/recipe";
+import defineAuthenticatedEventHandler from "~~/server/utils/define-authenticated-event-handler";
 
 export default defineAuthenticatedEventHandler(async (event) => {
   const recipesWithIngredients = await findRecipesWithIngredients(event.context.user.id);

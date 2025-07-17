@@ -1,4 +1,4 @@
-import type { DailyMealsSelection, Days } from "~/lib/type";
+import type { DailyMealsSelection, Days } from "~~/lib/types/ingredients";
 
 export const usePlannerStore = defineStore("usePlannerStore", () => {
   const days: Days = getWeekDays().map(d => ({

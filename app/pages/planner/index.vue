@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import Multiselect from "vue-multiselect";
+import type { SelectIngredient, SelectRecipe } from "~~/lib/db/schema";
+import type { DailyMealsSelection, Meals } from "~~/lib/types/ingredients";
 
-import type { SelectIngredient, SelectRecipe } from "~/lib/db/schema";
-import type { DailyMealsSelection, Meals } from "~/lib/type";
+import Multiselect from "vue-multiselect";
 
 definePageMeta({
   layout: "dashboard",
@@ -85,6 +85,7 @@ function generateShoppingList() {
               class=""
             >
               <Multiselect
+                v-if="selections[idx]"
                 v-model="selections[idx].meals[meal]"
                 :options="recipes"
                 :custom-label="(item: SelectRecipe) => item.name"

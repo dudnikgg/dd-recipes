@@ -1,8 +1,8 @@
 import type { DrizzleError } from "drizzle-orm";
 
-import { findIngredientByName, insertIngredient } from "~/lib/db/queries/ingredient";
-import { insertIngredientSchema } from "~/lib/db/schema";
-import defineAuthenticatedEventHandler from "~/utils/define-authenticated-event-handler";
+import { findIngredientByName, insertIngredient } from "~~/lib/db/queries/ingredient";
+import { insertIngredientSchema } from "~~/lib/db/schema";
+import defineAuthenticatedEventHandler from "~~/server/utils/define-authenticated-event-handler";
 
 export default defineAuthenticatedEventHandler(async (event) => {
   const result = await readValidatedBody(event, insertIngredientSchema.safeParse);

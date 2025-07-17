@@ -1,4 +1,11 @@
-type Star = Record<string, number>;
+type Star = {
+  x: number;
+  y: number;
+  size: number;
+  speed: number;
+  alpha: number;
+  direction: number;
+};
 
 export function drawStars(canvas: HTMLCanvasElement) {
   const ctx = canvas.getContext("2d");

@@ -2,9 +2,8 @@
 import type { FetchError } from "ofetch";
 
 import { toTypedSchema } from "@vee-validate/zod";
-
-import { insertIngredientSchema } from "~/lib/db/schema";
-import { MeasurementUnit } from "~/lib/type";
+import { insertIngredientSchema } from "~~/lib/db/schema";
+import { MeasurementUnit } from "~~/lib/types/ingredients";
 
 const submitError = ref("");
 const loading = ref(false);

@@ -51,7 +51,7 @@ export default defineNuxtConfig({
     },
   },
   imports: {
-    dirs: ["./types/"],
+    dirs: ["./lib/types/"],
   },
   colorMode: {
     dataValue: "theme",

@@ -1,13 +1,11 @@
 <script setup lang="ts">
+import type { InsertCategory, InsertRecipe, SelectCategory, SelectIngredient } from "~~/lib/db/schema";
 import type { FetchError } from "ofetch";
 import type { Path } from "vee-validate";
 
 import { toTypedSchema } from "@vee-validate/zod";
+import { InsertRecipeWithIngredientsSchema } from "~~/lib/db/schema";
 import Multiselect from "vue-multiselect";
-
-import type { InsertCategory, InsertRecipe, SelectCategory, SelectIngredient } from "~/lib/db/schema";
-
-import { InsertRecipeWithIngredientsSchema } from "~/lib/db/schema";
 
 const submitError = ref("");
 const loading = ref(false);
@@ -293,7 +291,7 @@ watch(selectedIngredients.value, (newSelectedIngredients) => {
 
           <template #input="{ index }">
             <input
-              :value="values.ingredients[index].amount"
+              :value="values.ingredients[index]?.amount"
               type="number"
               :disabled="loading"
               class="join-item rounded-none max-w-20 h-auto input w-full"
@@ -308,7 +306,7 @@ watch(selectedIngredients.value, (newSelectedIngredients) => {
           <template #endItem="{ index }">
             <div class="join-item border flex items-center justify-center rounded-none shrink min-w-10">
               {{
-                values.ingredients[index].ingredientId && ingredientUnitMap.get(values.ingredients[index].ingredientId)
+                values.ingredients[index] && values.ingredients[index].ingredientId && ingredientUnitMap.get(values.ingredients[index].ingredientId)
               }}
             </div>
           </template>

@@ -54,7 +54,13 @@ function onClick() {
     width: 0.5,
     height: 0.4,
   };
-  const ingredientDropSpots: Record<string, Record<string, number>> = {
+
+  type Spot = {
+    x: number;
+    y: number;
+    z?: number;
+  };
+  const ingredientDropSpots: Record<string, Spot> = {
     garlic: { x: 0.1, y: 0.4 },
     cucumber: { x: 0.6, y: 0.1, z: 45 },
     tomato: { x: 0.8, y: 0.4 },
@@ -81,7 +87,9 @@ function onClick() {
     }
 
     const iconRect = el.getBoundingClientRect();
-    const spot = ingredientDropSpots[key] || { x: 0.5, y: 0.5 };
+
+    const raw = ingredientDropSpots[key];
+    const spot: Spot = raw ?? { x: 0.5, y: 0.5 };
 
     const targetX = zoneX + zoneW * spot.x;
     const targetY = zoneY + zoneH * spot.y;

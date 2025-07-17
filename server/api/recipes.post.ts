@@ -1,10 +1,9 @@
 import type { DrizzleError } from "drizzle-orm";
 
+import { findRecipeByName, findUniqueSlug, insertRecipe } from "~~/lib/db/queries/recipe";
+import { InsertRecipeWithIngredientsSchema } from "~~/lib/db/schema";
+import defineAuthenticatedEventHandler from "~~/server/utils/define-authenticated-event-handler";
 import slugify from "slug";
-
-import { findRecipeByName, findUniqueSlug, insertRecipe } from "~/lib/db/queries/recipe";
-import { InsertRecipeWithIngredientsSchema } from "~/lib/db/schema";
-import defineAuthenticatedEventHandler from "~/utils/define-authenticated-event-handler";
 
 export default defineAuthenticatedEventHandler(async (event) => {
   const result = await readValidatedBody(event, InsertRecipeWithIngredientsSchema.safeParse);
