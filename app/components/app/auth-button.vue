@@ -6,12 +6,12 @@ const authStore = useAuthStore();
   <button
     :disabled="authStore.loading"
     class="btn bg-black text-white border-black"
-    @click="authStore.signIn"
+    @click="authStore.loginWithGoogle"
   >
     <span v-if="authStore.loading" class="loading loading-spinner loading-md" />
 
-    <NuxtIcon v-else name="bi:github" />
-    Login with GitHub
+    <NuxtIcon v-else name="bi:google" />
+    Login with Google
   </button>
 </template>
 

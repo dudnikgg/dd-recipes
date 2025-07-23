@@ -118,25 +118,31 @@ function onClick() {
 
     <div class="hero-content text-base-content text-center container mx-auto">
       <div class="max-w-2xl flex">
-        <div class="flex flex-col">
-          <h2 class="mb-5 text-5xl font-bold">
-            Hello there
-          </h2>
+        <div class="flex flex-col w-md">
+          <template v-if="!authStore.user">
+            <AppAuthSignupForm v-if="authStore.whichAuthForm === 'signup'" />
 
-          <p class="mb-5">
-            Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
-            quasi. In deleniti eaque aut repudiandae et a id nisi.
-          </p>
+            <AppAuthSigninForm v-if="authStore.whichAuthForm === 'signin'" />
 
-          <AppAuthButton v-if="!authStore.user" />
+            <AppAuthButton />
+          </template>
 
-          <NuxtLink
-            v-else
-            class="btn btn-secondary"
-            to="/dashboard"
-          >
-            Go To Dashboard
-          </NuxtLink>
+          <div v-else>
+            <h2 class="mb-5 text-5xl font-bold">
+              Hello there
+            </h2>
+
+            <p class="mb-5">
+              You are already logged in!
+            </p>
+
+            <NuxtLink
+              class="btn btn-secondary"
+              to="/dashboard"
+            >
+              Go To Dashboard
+            </NuxtLink>
+          </div>
         </div>
 
         <div class="hidden 2xl:block absolute bottom-0 h-full w-full right-0 -z-10" @click="onClick">

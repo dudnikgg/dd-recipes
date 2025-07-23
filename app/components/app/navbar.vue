@@ -36,13 +36,24 @@ const authStore = useAuthStore();
           </ul>
         </div>
 
-        <a
+        <div
           v-else-if="!authStore.user && !authStore.loading"
-          href="#"
-          class="btn btn-primary m-2"
+          class="flex gap-2"
         >
-          Sign Up
-        </a>
+          <button
+            class="btn btn-secondary m-2"
+            @click="authStore.setWhichAuthFrom('signin')"
+          >
+            Sign In
+          </button>
+
+          <button
+            class="btn btn-secondary m-2"
+            @click="authStore.setWhichAuthFrom('signup')"
+          >
+            Sign Up
+          </button>
+        </div>
 
         <div v-else-if="authStore.loading" class="skeleton h-10 w-32 m-2 bg-base-200 rounded-none" />
       </div>
