@@ -19,7 +19,7 @@ export const recipe = sqliteTable("recipe", {
   carbohydrates: int().notNull(),
   slug: text().notNull().unique(),
   category: int().notNull().references(() => category.id, { onDelete: "cascade" }),
-  userId: int().notNull().references(() => user.id, { onDelete: "cascade" }),
+  userId: text().notNull().references(() => user.id, { onDelete: "cascade" }),
   instruction: text().notNull(),
   createdAt: int().notNull().$default(() => Date.now()),
   updatedAt: int().notNull().$default(() => Date.now()).$onUpdate(() => Date.now()),

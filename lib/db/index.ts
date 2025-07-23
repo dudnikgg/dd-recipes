@@ -13,3 +13,4 @@ const db = drizzle({
 });
 
 export default db;
+export type DB = typeof db;
