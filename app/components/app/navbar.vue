@@ -40,19 +40,19 @@ const authStore = useAuthStore();
           v-else-if="!authStore.user && !authStore.loading"
           class="flex gap-2"
         >
-          <button
+          <NuxtLink
             class="btn btn-secondary m-2"
-            @click="authStore.setWhichAuthFrom('signin')"
+            to="/auth/sign-in"
           >
             Sign In
-          </button>
+          </NuxtLink>
 
-          <button
+          <NuxtLink
             class="btn btn-secondary m-2"
-            @click="authStore.setWhichAuthFrom('signup')"
+            to="/auth/sign-up"
           >
             Sign Up
-          </button>
+          </NuxtLink>
         </div>
 
         <div v-else-if="authStore.loading" class="skeleton h-10 w-32 m-2 bg-base-200 rounded-none" />

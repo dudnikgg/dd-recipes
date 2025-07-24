@@ -1,45 +1,29 @@
 <script setup lang="ts">
-import type { UserSignUp } from "~~/lib/types/user";
+import type { UserSignIn } from "~~/lib/types/user";
 
-import { SignUpSchema } from "~~/lib/zod-schemas";
+import { SignInSchema } from "~~/lib/zod-schemas";
 
 const authStore = useAuthStore();
 const submitError = ref();
 
-const { handleSubmit, errors, values } = useForm<UserSignUp>({
-  validationSchema: toTypedSchema(SignUpSchema),
+const { handleSubmit, errors, values } = useForm<UserSignIn>({
+  validationSchema: toTypedSchema(SignInSchema),
   initialValues: {},
 });
 
 const onSubmit = handleSubmit(async (values) => {
-  authStore.signUp(values);
+  authStore.signIn(values);
 });
 </script>
 
 <template>
   <form action="" class="flex flex-col gap-4">
     <AppFormTextField
-      v-model.trim="values.name"
-      name="name"
-      label="Name"
-      placeholder="Your name"
-      :error="errors.name"
-    />
-
-    <AppFormTextField
-      v-model.trim="values.username"
-      name="username"
-      label="Username"
-      placeholder="Your username"
-      :error="errors.username"
-    />
-
-    <AppFormTextField
-      v-model.trim="values.email"
-      name="email"
-      label="Email"
-      placeholder="Your email"
-      :error="errors.email"
+      v-model.trim="values.usernameOrEmail"
+      name="usernameOrEmail"
+      label="Username or Email"
+      placeholder="Your username or email"
+      :error="errors.usernameOrEmail"
     />
 
     <AppFormTextField
@@ -63,13 +47,13 @@ const onSubmit = handleSubmit(async (values) => {
 
     <button
       :disabled="authStore.loading"
-      class="btn bg-secondary text-secondary-content"
+      class="btn bg-secondary text-secondary-content "
       type="submit"
       @click="onSubmit"
     >
       <span v-if="authStore.loading" class="loading loading-spinner loading-md" />
 
-      Sign Up
+      Sign In
     </button>
   </form>
 </template>
