@@ -6,7 +6,7 @@ const { size = "medium" } = defineProps<{
 
 const sizesMap = computed(() => {
   const sizes = {
-    small: "w-8",
+    small: "w-4",
     medium: "w-16",
     large: "w-24",
   };

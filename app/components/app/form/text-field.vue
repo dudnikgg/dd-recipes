@@ -6,6 +6,11 @@ const { type = "text", addClass = "", name } = defineProps<{
   placeholder?: string;
   type?: string;
   addClass?: string;
+  loading?: boolean;
+}>();
+
+const emits = defineEmits<{
+  (e: "change", value: string): void;
 }>();
 
 const { errorMessage, value } = useField(name, undefined, {
@@ -18,6 +23,11 @@ const combinedClasses = computed(() => {
     "input-error": errorMessage.value,
   }, addClass);
 });
+
+function onChange(e: Event) {
+  const target = e.target as HTMLInputElement;
+  emits("change", target.value);
+}
 </script>
 
 <template>
@@ -26,14 +36,24 @@ const combinedClasses = computed(() => {
       {{ label }}
     </legend>
 
-    <input
-      v-model.trim="value"
-      :type="type ?? 'text'"
-      :disabled="disabled"
-      :class="combinedClasses"
-      :placeholder="placeholder"
-      :name="name"
-    >
+    <div class="relative">
+      <input
+        v-model.trim="value"
+        :type="type ?? 'text'"
+        :disabled="disabled"
+        :class="combinedClasses"
+        :placeholder="placeholder"
+        :name="name"
+        @change="onChange"
+      >
+
+      <AppLoader
+        v-if="loading"
+        class="absolute top-0 right-4 z-10"
+        size="small"
+        :loading="loading"
+      />
+    </div>
 
     <p v-if="errorMessage" class="fieldset-label text-error">
       {{ errorMessage }}

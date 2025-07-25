@@ -28,7 +28,7 @@ const authStore = useAuthStore();
 
           <ul tabindex="0" class="w-fit dropdown-content menu text-accent-content bg-accent z-1 p-1 shadow-sm">
             <li>
-              <NuxtLink to="/sign-out" class="rounded-none">
+              <NuxtLink to="/auth/sign-out" class="rounded-none">
                 Sign Out
                 <NuxtIcon name="ic:baseline-logout" size="18" />
               </nuxtlink>

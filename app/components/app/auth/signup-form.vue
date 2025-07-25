@@ -1,15 +1,56 @@
 <script setup lang="ts">
 import type { UserSignUp } from "~~/lib/types/user";
+import type { FetchError } from "ofetch";
 
+import { useAuth } from "#imports";
 import { SignUpSchema } from "~~/lib/zod-schemas";
 
 const authStore = useAuthStore();
+const { authClient } = useAuth();
+const loadingUsernameCheck = ref(false);
 const submitError = ref();
 
-const { handleSubmit, errors, values } = useForm<UserSignUp>({
+const { handleSubmit, errors, values, setErrors } = useForm<UserSignUp>({
   validationSchema: toTypedSchema(SignUpSchema),
   initialValues: {},
 });
+
+async function checkIfUsernameAvailable(username: string) {
+  const { csrf } = useCsrf();
+  const headers = new Headers();
+  headers.append("csrf-token", csrf);
+
+  const { data: isUsernameAvailable, error } = await authClient.isUsernameAvailable({
+    username,
+    fetchOptions: {
+      credentials: "include",
+      headers,
+    },
+  });
+
+  if (!isUsernameAvailable?.available || error) {
+    return new Error("This username is already taken");
+  }
+}
+
+const usernameDebounced = debounceFn(async () => {
+  const error = await checkIfUsernameAvailable(values.username);
+  if (error) {
+    setErrors({ username: error.message });
+  }
+  else {
+    setErrors({ username: "" });
+  }
+}, 1000);
+
+async function handleUsernameChange(value: string) {
+  if (!value.length) {
+    return;
+  }
+  loadingUsernameCheck.value = true;
+  await usernameDebounced();
+  loadingUsernameCheck.value = false;
+}
 
 const onSubmit = handleSubmit(async (values) => {
   authStore.signUp(values);
@@ -32,6 +73,8 @@ const onSubmit = handleSubmit(async (values) => {
       label="Username"
       placeholder="Your username"
       :error="errors.username"
+      :loading="loadingUsernameCheck"
+      @change="handleUsernameChange"
     />
 
     <AppFormTextField
