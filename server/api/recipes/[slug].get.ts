@@ -1,5 +1,5 @@
-import { findRecipe } from "~/lib/db/queries/recipe";
-import defineAuthenticatedEventHandler from "~/utils/define-authenticated-event-handler";
+import { findRecipe } from "~~/lib/db/queries/recipe";
+import defineAuthenticatedEventHandler from "~~/server/utils/define-authenticated-event-handler";
 
 export default defineAuthenticatedEventHandler(async (event) => {
   const slug = getRouterParam(event, "slug") as string;

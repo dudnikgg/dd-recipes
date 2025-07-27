@@ -1,18 +1,17 @@
 import slugify from "slug";
 
-import type { db } from "~/lib/db/index";
-
-import { ingredientToRecipe } from "~/lib/db/schema/ingredient-to-recipe";
-import { recipe } from "~/lib/db/schema/recipe";
+import type { DB } from "../index";
 
 import { findUniqueSlug } from "../queries/recipe";
 import { ingredient } from "../schema";
+import { ingredientToRecipe } from "../schema/ingredient-to-recipe";
+import { recipe } from "../schema/recipe";
 import allRecipes from "./data/all-recipes.json";
 
 type RawRecipe = typeof allRecipes[number];
 type RawIngredient = RawRecipe["ingredients"][number];
 
-type IngredientInsert = Omit<RawIngredient, "amount"> & { name: string; userId: number };
+type IngredientInsert = Omit<RawIngredient, "amount"> & { name: string; userId: string };
 
 type IngredientToRecipeInsert = {
   recipeId: number;
@@ -20,13 +19,13 @@ type IngredientToRecipeInsert = {
   amount: number;
 };
 
-function extractUniqueIngredients(recipes: RawRecipe[]): IngredientInsert[] {
+function extractUniqueIngredients(recipes: RawRecipe[], userId: string): IngredientInsert[] {
   const raw = recipes.flatMap((rec: RawRecipe) => {
     return rec.ingredients.map((ing: RawIngredient): IngredientInsert => {
       return {
         name: ing.name.trim(),
         measurement_unit: ing.measurement_unit.trim(),
-        userId: 1,
+        userId,
       };
     });
   });
@@ -56,12 +55,10 @@ function linkIngredientToRecipe(
   });
 }
 
-export default async function seed(db: db) {
-  const userId = 1;
+async function seedIngredients(db: DB, userId: string) {
+  const uniqueIngredients = extractUniqueIngredients(allRecipes, userId);
 
-  const uniqueIngredients = extractUniqueIngredients(allRecipes);
-
-  const insertedIngredients = (await Promise.all(
+  return (await Promise.all(
     uniqueIngredients.map((ing) => {
       return db
         .insert(ingredient)
@@ -69,32 +66,44 @@ export default async function seed(db: db) {
         .returning({ id: ingredient.id, name: ingredient.name, measurement_unit: ingredient.measurement_unit });
     }),
   )).flat();
+}
 
-  const ingredientToRecipeLinks: IngredientToRecipeInsert[] = [];
+export default async function seed(db: DB) {
+  try {
+    const users = await db.query.user.findMany();
 
-  // Insert recipes & gather junction data
-  for (const raw of allRecipes) {
-    const slug = await findUniqueSlug(slugify(raw.name));
+    for (const user of users) {
+      const insertedIngredients = await seedIngredients(db, user.id);
 
-    const [created] = await db
-      .insert(recipe)
-      .values({
-        ...raw,
-        slug,
-        userId,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      })
-      .returning({ id: recipe.id });
+      const ingredientToRecipeLinks: IngredientToRecipeInsert[] = [];
 
-    const links = linkIngredientToRecipe(raw, created.id, insertedIngredients);
-    ingredientToRecipeLinks.push(...links);
+      // Insert recipes & gather junction data
+      for (const raw of allRecipes) {
+        const slug = await findUniqueSlug(slugify(raw.name));
+
+        const [created] = await db
+          .insert(recipe)
+          .values({
+            ...raw,
+            slug,
+            userId: user.id,
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+          })
+          .returning({ id: recipe.id });
+
+        const links = linkIngredientToRecipe(raw, created.id, insertedIngredients);
+        ingredientToRecipeLinks.push(...links);
+      }
+
+      // Insert junction table entries
+      if (ingredientToRecipeLinks.length) {
+        await db.insert(ingredientToRecipe).values(ingredientToRecipeLinks);
+      }
+      console.log(`Seeded ${allRecipes.length} recipes and ${insertedIngredients.length} ingredients.`);
+    }
   }
-
-  // Insert junction table entries
-  if (ingredientToRecipeLinks.length) {
-    await db.insert(ingredientToRecipe).values(ingredientToRecipeLinks);
+  catch (e) {
+    console.error(e);
   }
-
-  console.log(`Seeded ${allRecipes.length} recipes and ${insertedIngredients.length} ingredients.`);
 };

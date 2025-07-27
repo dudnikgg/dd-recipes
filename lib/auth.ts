@@ -1,15 +1,9 @@
-import type { User } from "better-auth";
-
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { createAuthMiddleware } from "better-auth/plugins";
+import { createAuthMiddleware, username } from "better-auth/plugins";
 
 import db from "./db/index";
 import env from "./env";
-
-export type UserWithId = Omit<User, "id"> & {
-  id: number;
-};
 
 export const auth = betterAuth({
   hooks: {
@@ -25,6 +19,9 @@ export const auth = betterAuth({
       return ctx.json(ctx.context.session);
     }),
   },
+  plugins: [
+    username(),
+  ],
   database: drizzleAdapter(db, {
     provider: "sqlite",
   }),
@@ -37,9 +34,11 @@ export const auth = betterAuth({
     enabled: true,
   },
   socialProviders: {
-    github: {
-      clientId: env.GH_CLIENT_ID as string,
-      clientSecret: env.GH_CLIENT_SECRET as string,
+    google: {
+      clientId: env.GOOGLE_CLIENT_ID as string,
+      clientSecret: env.GOOGLE_CLIENT_SECRET as string,
     },
   },
 });
+
+export type User = typeof auth.$Infer.Session.user;

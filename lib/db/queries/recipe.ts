@@ -112,7 +112,7 @@ export async function insertRecipe(insertable: InsertRecipe, slug: string, userI
     if (insertable.ingredients.length) {
       const prepareIngredientsToRecipe = insertable.ingredients.map((item) => {
         return {
-          recipeId: newRecipe[0].id,
+          recipeId: newRecipe[0] ? newRecipe[0].id : null,
           ingredientId: item.ingredientId,
           amount: item.amount,
         } as InsertIngredientToRecipe;
@@ -137,11 +137,16 @@ export async function updateRecipeBySlug(updates: InsertRecipe, slug: string, us
   * Then update other recipe fields
   */
   return await db.transaction(async (tx) => {
-    const [{ id: recipeId }] = await tx.select({
+    const selectedRecipe = await tx.select({
       id: recipe.id,
     }).from(recipe).where(
       eq(recipe.slug, slug),
     );
+
+    const recipeId = selectedRecipe[0] ? selectedRecipe[0].id : undefined;
+
+    if (!recipeId)
+      return;
 
     const incomming = updates.ingredients;
     const current = await tx.select().from(ingredientToRecipe).where(

@@ -32,6 +32,11 @@ export default defineNuxtConfig({
     "nuxt-csurf",
     "nuxt-typed-router",
   ],
+  runtimeConfig: {
+    public: {
+      apiBase: "",
+    },
+  },
   icon: {
     componentName: "NuxtIcon",
   },
@@ -51,7 +56,7 @@ export default defineNuxtConfig({
     },
   },
   imports: {
-    dirs: ["./types/"],
+    dirs: ["./lib/types/"],
   },
   colorMode: {
     dataValue: "theme",

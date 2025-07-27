@@ -3,10 +3,9 @@ import type { SQLiteTable } from "drizzle-orm/sqlite-core";
 
 import { getTableName, sql } from "drizzle-orm";
 
-import db from "~/lib/db";
-import { category, ingredient, ingredientToRecipe, recipe, user } from "~/lib/db/schema/index";
-import env from "~/lib/env";
-
+import { category, ingredient, ingredientToRecipe, recipe, user } from "../db/schema/index";
+import env from "../env";
+import db from "./index";
 import * as seeds from "./seeds";
 
 if (!env.DB_SEEDING) {

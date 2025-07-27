@@ -12,8 +12,8 @@ const EnvSchema = z.object({
   TURSO_AUTH_TOKEN: z.string(),
   BETTER_AUTH_SECRET: z.string(),
   BETTER_AUTH_URL: z.string(),
-  GH_CLIENT_ID: z.string(),
-  GH_CLIENT_SECRET: z.string(),
+  GOOGLE_CLIENT_ID: z.string(),
+  GOOGLE_CLIENT_SECRET: z.string(),
   DB_SEEDING: stringBoolean,
 });
 
