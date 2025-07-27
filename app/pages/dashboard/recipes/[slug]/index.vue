@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const route = useRoute("recipes-slug");
+const route = useRoute("dashboard-recipes-slug");
 
 const { data: recipe, status } = useLazyFetch(`/api/recipes/${route.params.slug}`);
 
@@ -12,7 +12,7 @@ const loading = computed(() => status.value === "pending");
       <template #buttons>
         <NuxtLink
           :to="{
-            name: 'recipes-slug-edit',
+            name: 'dashboard-recipes-slug-edit',
             params: { slug: 'slug' in route.params ? route.params.slug : '' },
           }"
           class="btn btn-accent"

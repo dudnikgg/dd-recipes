@@ -11,7 +11,7 @@ const loading = computed(() => status.value === "pending");
     >
       <template #buttons>
         <NuxtLink
-          :to="{ name: 'recipes-add' }"
+          :to="{ name: 'dashboard-recipes-add' }"
           class="btn btn-accent"
         >
           Add recipe
@@ -33,7 +33,7 @@ const loading = computed(() => status.value === "pending");
           v-for="recipe in recipes"
           :key="recipe.id"
           :to="{
-            name: 'recipes-slug',
+            name: 'dashboard-recipes-slug',
             params: { slug: recipe.slug },
           }"
           class="card bg-base-300 w-80 shadow-sm"

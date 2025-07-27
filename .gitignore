@@ -28,3 +28,6 @@ logs
 
 # Docker data
 .docker
+
+*.md
+!README.md

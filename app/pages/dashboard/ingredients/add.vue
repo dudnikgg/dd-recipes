@@ -23,7 +23,7 @@ const onSubmit = handleSubmit(async (values) => {
       body: values,
     });
     submited.value = true;
-    navigateTo("/ingredients");
+    navigateTo("/dashboard/ingredients");
   }
   catch (e) {
     const error = e as FetchError;
