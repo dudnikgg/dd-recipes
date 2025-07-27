@@ -56,6 +56,12 @@
   }
 }
 
+.floating-ingredient {
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  z-index: 1;
+}
+
 /* Multiselect */
 .multiselect .multiselect__tags {
   @apply bg-transparent rounded-none;
