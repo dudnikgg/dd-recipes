@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import { int, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
-import { z } from "zod/v3";
+import { z } from "zod";
 
 import { recipe } from "./recipe";
 

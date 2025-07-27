@@ -3,7 +3,7 @@ import type { z } from "zod/v3";
 import { relations } from "drizzle-orm";
 import { int, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { z as zod } from "zod/v3";
+import { z as zod } from "zod";
 
 import { MeasurementUnitSchema, NameSchema } from "../../zod-schemas";
 import { user } from "./auth-schema";
