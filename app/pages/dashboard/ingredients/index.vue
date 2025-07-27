@@ -9,7 +9,7 @@ const { data: ingredients, status } = useFetch("/api/ingredients");
     >
       <template #buttons>
         <NuxtLink
-          :to="{ name: 'ingredients-add' }"
+          :to="{ name: 'dashboard-ingredients-add' }"
           class="btn btn-accent"
         >
           Add ingredients
@@ -27,7 +27,7 @@ const { data: ingredients, status } = useFetch("/api/ingredients");
           v-for="ingredient in ingredients"
           :key="ingredient.id"
           :to="{
-            name: 'ingredients-id',
+            name: 'dashboard-ingredients-id',
             params: { id: ingredient.id },
           }"
           class="card bg-base-300 w-80 shadow-sm"

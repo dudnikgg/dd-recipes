@@ -11,7 +11,6 @@ const submitError = ref("");
 const loading = ref(false);
 const submited = ref(false);
 const { $csrfFetch } = useNuxtApp();
-const route = useRoute("recipes-slug-edit");
 
 const initialFormData: InsertRecipe = {
   name: "",
@@ -31,14 +30,11 @@ const initialFormData: InsertRecipe = {
     ingredientId: undefined,
     amount: undefined,
   }],
-
 };
-
-const { resetForm, handleSubmit, errors, meta, setErrors, values, setFieldValue, setFieldError } = useForm<InsertRecipe>({
+const { handleSubmit, errors, meta, setErrors, values, setFieldValue, setFieldError } = useForm<InsertRecipe>({
   validationSchema: toTypedSchema(InsertRecipeWithIngredientsSchema),
   initialValues: initialFormData,
 });
-const { data: recipe } = await useFetch(`/api/recipes/${route.params.slug}`);
 
 const { data: categories, status: categoriesStatus } = await useFetch("/api/categories");
 const selectedCategory = ref<InsertCategory>();
@@ -68,11 +64,12 @@ const onSubmit = handleSubmit(async (values) => {
       ingredients: values.ingredients.filter(ing => Object.values(ing).some(val => val != null)),
     };
 
-    await $csrfFetch(`/api/recipes/${recipe.value?.slug}`, {
-      method: "PUT",
+    await $csrfFetch("/api/recipes", {
+      method: "POST",
       body: filteredValues,
     });
     submited.value = true;
+    navigateTo("/dashboard/recipes");
   }
   catch (e) {
     const error = e as FetchError;
@@ -85,7 +82,7 @@ const onSubmit = handleSubmit(async (values) => {
 });
 
 onBeforeRouteLeave(() => {
-  if (!submited.value && meta.value.touched) {
+  if (!submited.value && meta.value.dirty) {
     // eslint-disable-next-line no-alert
     const confirm = window.confirm("Are you sure you want to leave?");
     if (!confirm) {
@@ -96,11 +93,11 @@ onBeforeRouteLeave(() => {
   }
 });
 
-const selectedIngredients = ref<SelectIngredient[]>([]);
-function handleIngredientSelect(selectedItem: SelectIngredient, index: number) {
+const selectedIngredient = ref<SelectIngredient[]>([]);
+function handleSelect(selectedItem: SelectIngredient, index: number) {
   const fieldName = `ingredients[${index}].ingredientId` as Path<InsertRecipe>;
   setFieldValue(fieldName, selectedItem.id);
-  selectedIngredients.value[index] = selectedItem;
+  selectedIngredient.value[index] = selectedItem;
 }
 
 function handleAmountChange(event: Event, index: number) {
@@ -110,59 +107,19 @@ function handleAmountChange(event: Event, index: number) {
 }
 
 function handleIngredientRemove(index: number) {
-  selectedIngredients.value.splice(index, 1);
+  selectedIngredient.value.splice(index, 1);
 }
 
 function handleIngredientReset(index: number) {
-  selectedIngredients.value[index] = undefined as unknown as SelectIngredient;
+  selectedIngredient.value[index] = undefined as unknown as SelectIngredient;
 }
-
-const ingredientsOptions = ref();
-onMounted(() => {
-  if (recipe.value) {
-    const initialFormIngredients = recipe.value?.ingredients.map((ing, index) => {
-      selectedIngredients.value[index] = { ...ing };
-      selectedCategory.value = recipe.value?.recipeCategory;
-      return {
-        ingredientId: ing.id,
-        amount: ing.amount,
-
-      };
-    });
-
-    const initialRecipeCategory = recipe.value?.recipeCategory.id;
-
-    resetForm({ values: { ...recipe.value, ingredients: initialFormIngredients, category: initialRecipeCategory } });
-  }
-});
-
-ingredientsOptions.value = ingredients.value?.sort((a, b) => a.name.localeCompare(b.name));
-watch(selectedIngredients.value, (newSelectedIngredients) => {
-  if (newSelectedIngredients) {
-    const newSelectedSet = new Set(newSelectedIngredients.map(ing => ing.id));
-    ingredientsOptions.value = ingredients.value?.filter(ing => !newSelectedSet.has(ing.id));
-  }
-});
 </script>
 
 <template>
   <div class="h-full">
-    <AppContentHeader title="Edit recipe" show-back-button>
-      <template #buttons>
-        <button
-          type="submit"
-          form="editRecipeForm"
-          class="btn btn-accent"
-          :disabled="loading"
-        >
-          Save
-        </button>
-      </template>
-    </AppContentHeader>
+    <AppContentHeader title="New recipe" show-back-button />
 
-    <AppLoader :loading="loading" size="large" />
-
-    <div v-if="recipe" class="mt-10 flex gap-20">
+    <div class="mt-10 flex gap-20">
       <div class="flex flex-col gap-4 w-1/4 ">
         <div
           v-if="submitError"
@@ -175,7 +132,6 @@ watch(selectedIngredients.value, (newSelectedIngredients) => {
         </div>
 
         <form
-          id="editRecipeForm"
           action=""
           class="flex flex-col gap-4"
           novalidate
@@ -254,9 +210,28 @@ watch(selectedIngredients.value, (newSelectedIngredients) => {
               @select="handleSelectCategory"
             />
 
-            <p class="flex flex-col text-error mt-2">
+            <p
+              class="flex flex-col text-error mt-2"
+            >
               {{ errors.category }}
             </p>
+          </div>
+
+          <div class="flex justify-end">
+            <button
+              :disabled="loading"
+              type="submit"
+              class="btn btn-accent"
+            >
+              Save
+              <span v-if="loading" class="loading loading-spinner loading-sm" />
+
+              <NuxtIcon
+                v-else
+                name="bx:bxs-food-menu"
+                size="18"
+              />
+            </button>
           </div>
         </form>
       </div>
@@ -274,8 +249,8 @@ watch(selectedIngredients.value, (newSelectedIngredients) => {
         >
           <template #select="{ index }">
             <Multiselect
-              :model-value="selectedIngredients[index]"
-              :options="ingredientsOptions || []"
+              :model-value="selectedIngredient[index]"
+              :options="ingredients"
               :custom-label="(item: SelectIngredient) => item.name"
               :searchable="true"
               :close-on-select="true"
@@ -285,7 +260,7 @@ watch(selectedIngredients.value, (newSelectedIngredients) => {
               placeholder="Choose ingredient"
               aria-label="Choose ingredient"
               class="flex-1"
-              @select="(item: SelectIngredient) => handleIngredientSelect(item, index)"
+              @select="(item: SelectIngredient) => handleSelect(item, index)"
             />
           </template>
 
@@ -296,23 +271,22 @@ watch(selectedIngredients.value, (newSelectedIngredients) => {
               :disabled="loading"
               class="join-item rounded-none max-w-20 h-auto input w-full"
               placeholder="200"
-              min="0.1"
+              min="1"
               max="1000"
-              step="0.5"
               @change="handleAmountChange($event, index)"
             >
           </template>
 
           <template #endItem="{ index }">
             <div class="join-item border flex items-center justify-center rounded-none shrink min-w-10">
-              {{
-                values.ingredients[index] && values.ingredients[index].ingredientId && ingredientUnitMap.get(values.ingredients[index].ingredientId)
-              }}
+              {{ values.ingredients[index] && values.ingredients[index].ingredientId && ingredientUnitMap.get(values.ingredients[index].ingredientId) }}
             </div>
           </template>
 
           <template #errors="{ index }">
-            <p class="flex flex-col text-error mb-2">
+            <p
+              class="flex flex-col text-error mb-2"
+            >
               {{ errors[`ingredients[${index}].ingredientId`] }}
               {{ errors[`ingredients[${index}].amount`] }}
             </p>

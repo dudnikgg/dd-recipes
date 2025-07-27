@@ -14,7 +14,7 @@ const { data: ingredient } = useFetch("test", {
       <template #buttons>
         <NuxtLink
           :to="{
-            name: 'ingredients-id-edit',
+            name: 'dashboard-ingredients-id-edit',
             params: { id: 'id' in route.params ? route.params.id : '' },
           }"
           class="btn btn-accent"

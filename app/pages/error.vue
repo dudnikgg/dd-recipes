@@ -15,3 +15,9 @@ const error = route.query.error || "An unknown error occured!";
     </NuxtLink>
   </div>
 </template>
+
+<style>
+.card {
+  color: red;
+}
+</style>

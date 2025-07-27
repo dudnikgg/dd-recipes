@@ -3,6 +3,8 @@ const emits = defineEmits<{
   (e: "changeView", isShrink: boolean): void;
 }>();
 
+const authStore = useAuthStore();
+
 const isShrinkView = ref(false);
 function handleSidebarView() {
   isShrinkView.value = !isShrinkView.value;
@@ -36,48 +38,65 @@ onMounted(() => {
         <AppSidebarListItem
           icon="material-symbols:dashboard"
           text="Dashboard"
-          to="/dashboard"
+          to="/dashboard/home"
           :is-shrink-view="isShrinkView"
         />
 
         <AppSidebarListItem
           icon="bx:bxs-food-menu"
           text="Recipes"
-          to="/recipes"
+          to="/dashboard/recipes"
           :is-shrink-view="isShrinkView"
         />
 
         <AppSidebarListItem
           icon="material-symbols:grocery"
           text="Ingredients"
-          to="/ingredients"
+          to="/dashboard/ingredients"
           :is-shrink-view="isShrinkView"
         />
 
         <AppSidebarListItem
           icon="material-symbols:list-alt-outline-sharp"
           text="Planner"
-          to="/planner"
+          to="/dashboard/planner"
           :is-shrink-view="isShrinkView"
         />
 
         <AppSidebarListItem
           icon="material-symbols:settings"
           text="Settings"
-          to="/"
+          to="/dashboard/settings"
           :is-shrink-view="isShrinkView"
         />
       </ul>
 
       <div class="sidebar-profileSection mt-auto">
-        <img
-          src="https://assets.codepen.io/3306515/i-know.jpg"
-          width="40"
-          height="40"
-          alt="Monica Geller"
-        >
+        <div v-if="!authStore.loading && authStore.user" class="w-full dropdown dropdown-top dropdown-end flex">
+          <div
+            tabindex="0"
+            role="button"
+            class="btn btn-accent py-4 px-1 flex-1"
+          >
+            <div v-if="authStore.user.image" class="avatar">
+              <div class="w-8 rounded-full">
+                <img :src="authStore.user.image" :alt="authStore.user.name">
+              </div>
+            </div>
+            {{ authStore.user.name }}
+          </div>
 
-        <span>Monica Geller</span>
+          <ul tabindex="0" class="w-full dropdown-content menu menu-md mb-2 text-accent-content bg-accent z-1 p-1 shadow-sm">
+            <li>
+              <NuxtLink to="/auth/sign-out" class="rounded-none justify-between">
+                Sign Out
+                <NuxtIcon name="ic:baseline-logout" size="18" />
+              </nuxtlink>
+            </li>
+          </ul>
+        </div>
+
+        <div v-else-if="authStore.loading" class="skeleton h-10 w-32 m-2 bg-base-200 rounded-none" />
       </div>
     </div>
   </div>
