@@ -53,12 +53,35 @@ async function handleUsernameChange(value: string) {
 }
 
 const onSubmit = handleSubmit(async (values) => {
-  authStore.signUp(values);
+  try {
+    submitError.value = "";
+    const { data, error } = await authStore.signUp(values);
+    if (!data && error) {
+      submitError.value = error.message || "An unknown error occurred.";
+    }
+  }
+  catch (e) {
+    const error = e as FetchError;
+    if (error.data?.data) {
+      setErrors(error.data?.data);
+    }
+    submitError.value = error.data?.statusMessage || error.statusMessage || "An unknown error occured.";
+  }
 });
 </script>
 
 <template>
   <form action="" class="flex flex-col gap-4">
+    <div
+      v-if="submitError"
+      role="alert"
+      class="alert alert-error rounded-none"
+    >
+      <NuxtIcon name="ic:twotone-report-gmailerrorred" size="24" />
+
+      <span>{{ submitError }}</span>
+    </div>
+
     <AppFormTextField
       v-model.trim="values.name"
       name="name"
@@ -93,16 +116,6 @@ const onSubmit = handleSubmit(async (values) => {
       placeholder="Your password"
       :error="errors.password"
     />
-
-    <div
-      v-if="submitError"
-      role="alert"
-      class="alert alert-error rounded-none"
-    >
-      <NuxtIcon name="ic:twotone-report-gmailerrorred" size="24" />
-
-      <span>{{ submitError }}</span>
-    </div>
 
     <button
       :disabled="authStore.loading"

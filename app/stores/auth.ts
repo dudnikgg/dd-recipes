@@ -30,24 +30,26 @@ export const useAuthStore = defineStore("useAuthStore", () => {
       },
     });
 
-  async function signIn() {
-    const { csrf } = useCsrf();
-    const headers = new Headers();
-    headers.append("csrf-token", csrf);
+    return response;
+  }
 
+  async function signIn({ usernameOrEmail, password }: UserSignIn) {
     await authClient.signIn.email({
-
+      email: usernameOrEmail,
+      password,
+      fetchOptions: {
+        credentials: "include",
+        headers,
+      },
     });
+
+    navigateTo("/dashboard/home");
   }
 
   async function loginWithGoogle() {
-    const { csrf } = useCsrf();
-    const headers = new Headers();
-    headers.append("csrf-token", csrf);
-
     await authClient.signIn.social({
       provider: "google",
-      callbackURL: "/dashboard",
+      callbackURL: "/dashboard/home",
       errorCallbackURL: "/error",
       fetchOptions: {
         headers,
@@ -56,15 +58,13 @@ export const useAuthStore = defineStore("useAuthStore", () => {
   }
 
   async function signOut() {
-    const { csrf } = useCsrf();
-    const headers = new Headers();
-    headers.append("csrf-token", csrf);
-
     await authClient.signOut({
       fetchOptions: {
         headers,
       },
     });
+    session.value = null;
+    await init();
     navigateTo("/");
   }
 
@@ -76,7 +76,5 @@ export const useAuthStore = defineStore("useAuthStore", () => {
     signOut,
     loginWithGoogle,
     user,
-    whichAuthForm,
-    setWhichAuthFrom,
   };
 });

@@ -9,14 +9,9 @@ export default defineEventHandler(async (event) => {
 
   event.context.user = session?.user as unknown as UserWithId;
 
-  const restrictedPaths = [
-    "/dashboard",
-    "/recipes",
-    "/ingredients",
-    "/planner",
-    "/settings",
-  ];
-  if (restrictedPaths.some(path => event.path.startsWith(path))) {
+  const isRestrictedPath = event.path.startsWith("/dashboard");
+
+  if (isRestrictedPath) {
     if (!session?.user) {
       await sendRedirect(event, "/", 302);
     }
