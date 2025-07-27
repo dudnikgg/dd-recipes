@@ -20,43 +20,43 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@libsql/client": "^0.15.9",
+    "@libsql/client": "^0.15.10",
     "@nuxt/eslint": "1.4.1",
     "@nuxt/fonts": "0.11.4",
     "@nuxt/icon": "1.13.0",
     "@nuxt/image": "1.10.0",
     "@nuxtjs/color-mode": "3.5.2",
     "@pinia/nuxt": "0.11.1",
-    "@tailwindcss/vite": "^4.1.10",
+    "@tailwindcss/vite": "^4.1.11",
     "@vee-validate/nuxt": "^4.15.1",
     "@vee-validate/zod": "^4.15.1",
     "@vercel/analytics": "^1.5.0",
-    "@vue/typescript-plugin": "^2.2.10",
-    "better-auth": "^1.3.3",
-    "concurrently": "^9.1.2",
-    "dotenv": "^16.5.0",
-    "drizzle-orm": "^0.44.2",
+    "@vue/typescript-plugin": "^2.2.12",
+    "better-auth": "^1.3.4",
+    "concurrently": "^9.2.0",
+    "dotenv": "^16.6.1",
+    "drizzle-orm": "^0.44.3",
     "drizzle-zod": "^0.7.1",
-    "eslint": "^9.29.0",
+    "eslint": "^9.32.0",
     "gsap": "^3.13.0",
-    "nuxt": "^4.0.0",
+    "nuxt": "^4.0.1",
     "nuxt-csurf": "1.6.5",
     "nuxt-typed-router": "4.0.1",
     "pinia": "^3.0.3",
-    "prettier": "^3.5.3",
-    "tailwindcss": "^4.1.10",
-    "vue": "^3.5.17",
-    "vue-multiselect": "^3.2.0",
+    "prettier": "^3.6.2",
+    "tailwindcss": "^4.1.11",
+    "vue": "^3.5.18",
+    "vue-multiselect": "^3.3.1",
     "vue-router": "^4.5.1",
-    "zod": "^3.25.67"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^4.15.0",
+    "@antfu/eslint-config": "^4.19.0",
     "@types/slug": "^5.0.9",
     "clsx": "^2.1.1",
     "cross-env": "^7.0.3",
-    "daisyui": "^5.0.43",
-    "drizzle-kit": "^0.31.1",
+    "daisyui": "^5.0.48",
+    "drizzle-kit": "^0.31.4",
     "eslint-plugin-format": "^1.0.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",
@@ -65,7 +65,7 @@
     "tailwind-merge": "^3.3.1",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",
-    "vue-tsc": "^2.2.10"
+    "vue-tsc": "^2.2.12"
   },
   "pnpm": {
     "supportedArchitectures": {
@@ -81,7 +81,11 @@
     },
     "overrides": {
       "sharp": "0.33.4"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "unrs-resolver"
+    ]
   },
   "lint-staged": {
     "*": "pnpm lint"
