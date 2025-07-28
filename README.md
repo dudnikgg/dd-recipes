@@ -6,7 +6,10 @@
 
 Check out the current version: [https://recipes.dudnikgg.space](https://recipes.dudnikgg.space)
 
-⚠️ **Note**: This project is currently in active development and not yet ready for production use. It serves as my learning journey into Vue.js/Nuxt.js while aiming to become a fully functional recipe management solution.
+![demo](/screenshot.png?raw=true)
+
+> [!WARNING]
+> This project is currently in active development and not yet ready for production use. It serves as my learning journey into Vue.js/Nuxt.js while aiming to become a fully functional recipe management solution.
 
 ## Project Overview
 
