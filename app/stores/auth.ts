@@ -6,9 +6,12 @@ export const useAuthStore = defineStore("useAuthStore", () => {
   const { authClient } = useAuth();
 
   const session = ref<Awaited<ReturnType<typeof authClient.useSession>> | null>(null);
-  const { csrf } = useCsrf();
-  const headers = new Headers();
-  headers.append("csrf-token", csrf);
+  const getCsrfHeaders = () => {
+    const { csrf } = useCsrf();
+    const headers = new Headers();
+    headers.append("csrf-token", csrf);
+    return headers;
+  };
 
   async function init() {
     const data = await authClient.useSession(useFetch);
@@ -26,7 +29,7 @@ export const useAuthStore = defineStore("useAuthStore", () => {
       username,
       fetchOptions: {
         credentials: "include",
-        headers,
+        headers: getCsrfHeaders(),
       },
     });
 
@@ -39,7 +42,7 @@ export const useAuthStore = defineStore("useAuthStore", () => {
       password,
       fetchOptions: {
         credentials: "include",
-        headers,
+        headers: getCsrfHeaders(),
       },
     });
 
@@ -52,7 +55,8 @@ export const useAuthStore = defineStore("useAuthStore", () => {
       callbackURL: "/dashboard/home",
       errorCallbackURL: "/error",
       fetchOptions: {
-        headers,
+        headers: getCsrfHeaders(),
+
       },
     });
   }
@@ -60,7 +64,7 @@ export const useAuthStore = defineStore("useAuthStore", () => {
   async function signOut() {
     await authClient.signOut({
       fetchOptions: {
-        headers,
+        headers: getCsrfHeaders(),
       },
     });
     session.value = null;
