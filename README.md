@@ -1,6 +1,6 @@
 # DD Recipes
 
-![Vercel Deploy](https://deploy-badge.vercel.app/vercel/dd-recipes-dudnikggs-projects?style=flat-square&name=dd-recipes)
+![Vercel Deploy](https://deploy-badge.vercel.app/vercel/dd-recipes-dudnikggs-projects?style=flat-square&name=Vercel)
 
 > A modern recipe management application built with Vue.js/Nuxt.js
 
