@@ -1,6 +1,6 @@
 # DD Recipes
 
-[![Deployed on Vercel](https://therealsujitk-vercel-badge.vercel.app/?app=dd-recipes)](https://recipes.dudnikgg.space)
+![Vercel Deploy](https://deploy-badge.vercel.app/vercel/dd-recipes-dudnikggs-projects?style=flat-square&name=dd-recipes)
 
 > A modern recipe management application built with Vue.js/Nuxt.js
 
