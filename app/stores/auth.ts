@@ -34,7 +34,7 @@ export const useAuthStore = defineStore("useAuthStore", () => {
   }
 
   async function signIn({ usernameOrEmail, password }: UserSignIn) {
-    await authClient.signIn.email({
+    const response = await authClient.signIn.email({
       email: usernameOrEmail,
       password,
       fetchOptions: {
@@ -43,7 +43,7 @@ export const useAuthStore = defineStore("useAuthStore", () => {
       },
     });
 
-    navigateTo("/dashboard/home");
+    return response;
   }
 
   async function loginWithGoogle() {

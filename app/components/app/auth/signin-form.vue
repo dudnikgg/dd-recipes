@@ -1,23 +1,51 @@
 <script setup lang="ts">
 import type { UserSignIn } from "~~/lib/types/user";
+import type { FetchError } from "ofetch";
 
 import { SignInSchema } from "~~/lib/zod-schemas";
 
 const authStore = useAuthStore();
 const submitError = ref();
 
-const { handleSubmit, errors, values } = useForm<UserSignIn>({
+const { handleSubmit, errors, values, setErrors } = useForm<UserSignIn>({
   validationSchema: toTypedSchema(SignInSchema),
   initialValues: {},
 });
 
 const onSubmit = handleSubmit(async (values) => {
-  authStore.signIn(values);
+  try {
+    submitError.value = "";
+    const { data, error } = await authStore.signIn(values);
+    if (!data && error) {
+      submitError.value = error.message || "An unknown error occurred.";
+    }
+    else {
+      navigateTo("/dashboard/home");
+    }
+  }
+  catch (e) {
+    const error = e as FetchError;
+
+    if (error.data?.data) {
+      setErrors(error.data?.data);
+    }
+    submitError.value = error.data?.statusMessage || error.statusMessage || "An unknown error occured.";
+  }
 });
 </script>
 
 <template>
   <form action="" class="flex flex-col gap-4">
+    <div
+      v-if="submitError"
+      role="alert"
+      class="alert alert-error rounded-none"
+    >
+      <NuxtIcon name="ic:twotone-report-gmailerrorred" size="24" />
+
+      <span>{{ submitError }}</span>
+    </div>
+
     <AppFormTextField
       v-model.trim="values.usernameOrEmail"
       name="usernameOrEmail"
@@ -34,16 +62,6 @@ const onSubmit = handleSubmit(async (values) => {
       placeholder="Your password"
       :error="errors.password"
     />
-
-    <div
-      v-if="submitError"
-      role="alert"
-      class="alert alert-error rounded-none"
-    >
-      <NuxtIcon name="ic:twotone-report-gmailerrorred" size="24" />
-
-      <span>{{ submitError }}</span>
-    </div>
 
     <button
       :disabled="authStore.loading"
