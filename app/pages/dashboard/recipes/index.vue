@@ -1,12 +1,12 @@
 <script setup lang="ts">
-const { data: recipes, status } = useLazyFetch("/api/recipes");
+const { data: recipes, status } = useFetch("/api/recipes");
 
 const loading = computed(() => status.value === "pending");
 </script>
 
 <template>
-  <div class="h-full">
-    <AppContentHeader
+  <AppPageWrapper>
+    <AppPageHeader
       title="Recipes"
     >
       <template #buttons>
@@ -17,18 +17,10 @@ const loading = computed(() => status.value === "pending");
           Add recipe
         </NuxtLink>
       </template>
-    </AppContentHeader>
+    </AppPageHeader>
 
-    <div
-      class="flex flex-wrap gap-6 h-full mt-10"
-      :class="loading ? 'items-center' : 'items-start'"
-    >
-      <AppLoader
-        :loading="loading"
-        size="large"
-      />
-
-      <template v-if="recipes && recipes.length > 0">
+    <AppPageContentWrapper :loading="loading">
+      <template v-if="recipes && recipes.length" #content>
         <NuxtLink
           v-for="recipe in recipes"
           :key="recipe.id"
@@ -62,10 +54,6 @@ const loading = computed(() => status.value === "pending");
           </div>
         </NuxtLink>
       </template>
-
-      <div v-if="!loading && !recipes?.length">
-        You have no recipes, yet...
-      </div>
-    </div>
-  </div>
+    </AppPageContentWrapper>
+  </AppPageWrapper>
 </template>

@@ -8,7 +8,7 @@ import { InsertRecipeWithIngredientsSchema } from "~~/lib/db/schema";
 import Multiselect from "vue-multiselect";
 
 const submitError = ref("");
-const loading = ref(false);
+const submitting = ref(false);
 const submited = ref(false);
 const { $csrfFetch } = useNuxtApp();
 const route = useRoute("dashboard-recipes-slug-edit");
@@ -38,9 +38,10 @@ const { resetForm, handleSubmit, errors, meta, setErrors, values, setFieldValue,
   validationSchema: toTypedSchema(InsertRecipeWithIngredientsSchema),
   initialValues: initialFormData,
 });
-const { data: recipe } = await useFetch(`/api/recipes/${route.params.slug}`);
 
-const { data: categories, status: categoriesStatus } = await useFetch("/api/categories");
+const { data: recipe, status: recipeStatus } = useFetch(`/api/recipes/${route.params.slug}`);
+
+const { data: categories, status: categoriesStatus } = useFetch("/api/categories");
 const selectedCategory = ref<InsertCategory>();
 
 function handleSelectCategory(cat: InsertCategory) {
@@ -48,10 +49,12 @@ function handleSelectCategory(cat: InsertCategory) {
   setFieldValue("category", selectedCategory.value.id);
 }
 
-const { data: ingredients, status } = await useFetch("/api/ingredients");
+const { data: ingredients, status: ingredientsStatus } = useFetch("/api/ingredients");
 const ingredientUnitMap = computed(() =>
   new Map(ingredients.value?.map(i => [i.id, i.measurement_unit]) ?? []),
 );
+
+const loading = computed(() => recipeStatus.value === "pending" || categoriesStatus.value === "pending" || ingredientsStatus.value === "pending");
 
 const onSubmit = handleSubmit(async (values) => {
   if (!values.category) {
@@ -61,7 +64,7 @@ const onSubmit = handleSubmit(async (values) => {
 
   try {
     submitError.value = "";
-    loading.value = true;
+    submitting.value = true;
 
     const filteredValues = {
       ...values,
@@ -81,7 +84,7 @@ const onSubmit = handleSubmit(async (values) => {
     }
     submitError.value = error.data?.statusMessage || error.statusMessage || "An unknown error occured.";
   }
-  loading.value = false;
+  submitting.value = false;
 });
 
 onBeforeRouteLeave(() => {
@@ -118,7 +121,7 @@ function handleIngredientReset(index: number) {
 }
 
 const ingredientsOptions = ref();
-onMounted(() => {
+watch(ingredients, () => {
   if (recipe.value) {
     const initialFormIngredients = recipe.value?.ingredients.map((ing, index) => {
       selectedIngredients.value[index] = { ...ing };
@@ -146,179 +149,178 @@ watch(selectedIngredients.value, (newSelectedIngredients) => {
 </script>
 
 <template>
-  <div class="h-full">
-    <AppContentHeader title="Edit recipe" show-back-button>
+  <AppPageWrapper>
+    <AppPageHeader title="Edit recipe" show-back-button>
       <template #buttons>
         <button
           type="submit"
           form="editRecipeForm"
           class="btn btn-accent"
-          :disabled="loading"
+          :disabled="submitting"
         >
           Save
         </button>
       </template>
-    </AppContentHeader>
+    </AppPageHeader>
 
-    <AppLoader :loading="loading" size="large" />
+    <AppPageContentWrapper :loading="loading">
+      <template v-if="recipe && categories && ingredients && categories.length > 0 && ingredients.length > 0" #content>
+        <div class="flex flex-col gap-4 w-1/4 ">
+          <div
+            v-if="submitError"
+            role="alert"
+            class="alert alert-error rounded-none"
+          >
+            <NuxtIcon name="ic:twotone-report-gmailerrorred" size="24" />
 
-    <div v-if="recipe" class="mt-10 flex gap-20">
-      <div class="flex flex-col gap-4 w-1/4 ">
-        <div
-          v-if="submitError"
-          role="alert"
-          class="alert alert-error rounded-none"
-        >
-          <NuxtIcon name="ic:twotone-report-gmailerrorred" size="24" />
+            <span>{{ submitError }}</span>
+          </div>
 
-          <span>{{ submitError }}</span>
+          <form
+            id="editRecipeForm"
+            action=""
+            class="flex flex-col gap-4"
+            novalidate
+            @submit.prevent="onSubmit"
+          >
+            <AppFormTextField
+              v-model.trim="values.name"
+              :disabled="submitting"
+              name="name"
+              label="Recipe Name"
+              placeholder="Lasagna"
+              :error="errors.name"
+            />
+
+            <AppFormTextarea
+              v-model="values.instruction"
+              :disabled="submitting"
+              name="instruction"
+              label="Recipe Text"
+              placeholder="Content..."
+              :error="errors.instruction"
+            />
+
+            <div class="flex gap-4 items-center">
+              <AppFormNumberField
+                :disabled="submitting"
+                name="calories"
+                label="Calories"
+                placeholder="123"
+                :error="errors.calories"
+              />
+
+              <AppFormNumberField
+                :disabled="submitting"
+                name="proteins"
+                label="Proteins"
+                placeholder="12"
+                :error="errors.proteins"
+              />
+
+              <AppFormNumberField
+                :disabled="submitting"
+                name="fats"
+                label="Fats"
+                placeholder="12"
+                :error="errors.fats"
+              />
+
+              <AppFormNumberField
+                :disabled="submitting"
+                name="carbohydrates"
+                label="Carbohydrates"
+                placeholder="12"
+                :error="errors.carbohydrates"
+              />
+            </div>
+
+            <div class="flex flex-col">
+              <label class="font-[600] text-xs text-base-content py-2" for="">
+                Categories
+              </label>
+
+              <Multiselect
+                :model-value="selectedCategory"
+                :options="categories"
+                :custom-label="(item: SelectCategory) => item.name"
+                :searchable="true"
+                :disabled="categoriesStatus === 'pending'"
+                :close-on-select="true"
+                :show-labels="true"
+                :allow-empty="false"
+                open-direction="bottom"
+                placeholder="Choose category"
+                aria-label="Choose category"
+                class="flex-1"
+                @select="handleSelectCategory"
+              />
+
+              <p class="flex flex-col text-error mt-2">
+                {{ errors.category }}
+              </p>
+            </div>
+          </form>
         </div>
 
-        <form
-          id="editRecipeForm"
-          action=""
-          class="flex flex-col gap-4"
-          novalidate
-          @submit.prevent="onSubmit"
-        >
-          <AppFormTextField
-            v-model.trim="values.name"
-            :disabled="loading"
-            name="name"
-            label="Recipe Name"
-            placeholder="Lasagna"
-            :error="errors.name"
-          />
+        <div class="flex flex-col w-1/4">
+          <label class="font-[600] text-xs text-base-content py-2" for="">
+            Ingredients
+          </label>
 
-          <AppFormTextarea
-            v-model="values.instruction"
-            :disabled="loading"
-            name="instruction"
-            label="Recipe Text"
-            placeholder="Content..."
-            :error="errors.instruction"
-          />
+          <AppFormSelectRepeater
+            name="ingredients"
+            @remove="handleIngredientRemove"
+            @reset="handleIngredientReset"
+          >
+            <template #select="{ index }">
+              <Multiselect
+                :model-value="selectedIngredients[index]"
+                :options="ingredientsOptions || []"
+                :custom-label="(item: SelectIngredient) => item.name"
+                :searchable="true"
+                :close-on-select="true"
+                :show-labels="true"
+                :allow-empty="false"
+                open-direction="bottom"
+                placeholder="Choose ingredient"
+                aria-label="Choose ingredient"
+                class="flex-1"
+                @select="(item: SelectIngredient) => handleIngredientSelect(item, index)"
+              />
+            </template>
 
-          <div class="flex gap-4 items-center">
-            <AppFormNumberField
-              :disabled="loading"
-              name="calories"
-              label="Calories"
-              placeholder="123"
-              :error="errors.calories"
-            />
+            <template #input="{ index }">
+              <input
+                :value="values.ingredients[index]?.amount"
+                type="number"
+                :disabled="submitting"
+                class="join-item rounded-none max-w-20 h-auto input w-full"
+                placeholder="200"
+                min="0.1"
+                max="1000"
+                step="0.5"
+                @change="handleAmountChange($event, index)"
+              >
+            </template>
 
-            <AppFormNumberField
-              :disabled="loading"
-              name="proteins"
-              label="Proteins"
-              placeholder="12"
-              :error="errors.proteins"
-            />
+            <template #endItem="{ index }">
+              <div class="join-item border flex items-center justify-center rounded-none shrink min-w-10">
+                {{
+                  values.ingredients[index] && values.ingredients[index].ingredientId && ingredientUnitMap.get(values.ingredients[index].ingredientId)
+                }}
+              </div>
+            </template>
 
-            <AppFormNumberField
-              :disabled="loading"
-              name="fats"
-              label="Fats"
-              placeholder="12"
-              :error="errors.fats"
-            />
-
-            <AppFormNumberField
-              :disabled="loading"
-              name="carbohydrates"
-              label="Carbohydrates"
-              placeholder="12"
-              :error="errors.carbohydrates"
-            />
-          </div>
-
-          <div class="flex flex-col">
-            <label class="font-[600] text-xs text-base-content py-2" for="">
-              Categories
-            </label>
-
-            <Multiselect
-              :model-value="selectedCategory"
-              :options="categories"
-              :custom-label="(item: SelectCategory) => item.name"
-              :searchable="true"
-              :disabled="categoriesStatus === 'pending'"
-              :close-on-select="true"
-              :show-labels="true"
-              :allow-empty="false"
-              open-direction="bottom"
-              placeholder="Choose category"
-              aria-label="Choose category"
-              class="flex-1"
-              @select="handleSelectCategory"
-            />
-
-            <p class="flex flex-col text-error mt-2">
-              {{ errors.category }}
-            </p>
-          </div>
-        </form>
-      </div>
-
-      <div class="flex flex-col w-1/4">
-        <label class="font-[600] text-xs text-base-content py-2" for="">
-          Ingredients
-        </label>
-
-        <AppFormSelectRepeater
-          :loading="loading || status === 'pending'"
-          name="ingredients"
-          @remove="handleIngredientRemove"
-          @reset="handleIngredientReset"
-        >
-          <template #select="{ index }">
-            <Multiselect
-              :model-value="selectedIngredients[index]"
-              :options="ingredientsOptions || []"
-              :custom-label="(item: SelectIngredient) => item.name"
-              :searchable="true"
-              :close-on-select="true"
-              :show-labels="true"
-              :allow-empty="false"
-              open-direction="bottom"
-              placeholder="Choose ingredient"
-              aria-label="Choose ingredient"
-              class="flex-1"
-              @select="(item: SelectIngredient) => handleIngredientSelect(item, index)"
-            />
-          </template>
-
-          <template #input="{ index }">
-            <input
-              :value="values.ingredients[index]?.amount"
-              type="number"
-              :disabled="loading"
-              class="join-item rounded-none max-w-20 h-auto input w-full"
-              placeholder="200"
-              min="0.1"
-              max="1000"
-              step="0.5"
-              @change="handleAmountChange($event, index)"
-            >
-          </template>
-
-          <template #endItem="{ index }">
-            <div class="join-item border flex items-center justify-center rounded-none shrink min-w-10">
-              {{
-                values.ingredients[index] && values.ingredients[index].ingredientId && ingredientUnitMap.get(values.ingredients[index].ingredientId)
-              }}
-            </div>
-          </template>
-
-          <template #errors="{ index }">
-            <p class="flex flex-col text-error mb-2">
-              {{ errors[`ingredients[${index}].ingredientId`] }}
-              {{ errors[`ingredients[${index}].amount`] }}
-            </p>
-          </template>
-        </AppFormSelectRepeater>
-      </div>
-    </div>
-  </div>
+            <template #errors="{ index }">
+              <p class="flex flex-col text-error mb-2">
+                {{ errors[`ingredients[${index}].ingredientId`] }}
+                {{ errors[`ingredients[${index}].amount`] }}
+              </p>
+            </template>
+          </AppFormSelectRepeater>
+        </div>
+      </template>
+    </AppPageContentWrapper>
+  </AppPageWrapper>
 </template>

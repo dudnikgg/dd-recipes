@@ -1,7 +1,7 @@
 <script setup lang="ts">
-const { name } = defineProps<{
+const { loading = false, name } = defineProps<{
   name: string;
-  loading: boolean;
+  loading?: boolean;
 }>();
 
 const emits = defineEmits<{

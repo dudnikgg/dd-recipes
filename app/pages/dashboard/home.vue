@@ -3,9 +3,17 @@ const authStore = useAuthStore();
 </script>
 
 <template>
-  <div>
-    Hello, {{ authStore.user?.name ?? authStore.user?.username }}!
-  </div>
+  <AppPageWrapper>
+    <AppPageHeader title="Home" />
+
+    <AppPageContentWrapper>
+      <template #content>
+        <div>
+          Hello, {{ authStore.user?.name ?? authStore.user?.username }}!
+        </div>
+      </template>
+    </AppPageContentWrapper>
+  </AppPageWrapper>
 </template>
 
 <style scoped></style>

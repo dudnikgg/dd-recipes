@@ -1,13 +1,12 @@
 <script setup lang="ts">
 const route = useRoute();
 
-const { data: ingredient } = useFetch("test", {
-});
+const ingredient = "Some ingredient";
 </script>
 
 <template>
   <main>
-    <AppContentHeader
+    <AppPageHeader
       title="Ingredient"
       show-back-button
     >
@@ -22,7 +21,7 @@ const { data: ingredient } = useFetch("test", {
           Edit ingredient
         </NuxtLink>
       </template>
-    </AppContentHeader>
+    </AppPageHeader>
 
     {{ ingredient }}
   </main>

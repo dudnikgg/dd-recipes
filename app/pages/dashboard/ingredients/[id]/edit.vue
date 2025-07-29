@@ -3,7 +3,7 @@
 
 <template>
   <main>
-    <AppContentHeader
+    <AppPageHeader
       title="Edit ingredient"
       show-back-button
     >
@@ -12,6 +12,6 @@
           Save
         </button>
       </template>
-    </AppContentHeader>
+    </AppPageHeader>
   </main>
 </template>
