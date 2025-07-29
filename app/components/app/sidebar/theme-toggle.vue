@@ -10,7 +10,7 @@ const isDark = computed({
     return colorMode.value === "dracula" || colorMode.value === "dark";
   },
   set(value) {
-    colorMode.preference = value ? "dracula" : "nord";
+    colorMode.preference = value ? "dracula" : "lofi";
   },
 });
 
@@ -28,10 +28,11 @@ const switched = computed(() => {
 
       <label
         for="theme-toggle"
-        class="flex justify-between relative cursor-pointer before:absolute before:z-0 before:inline-block before:w-1/2 before:h-full bg-base-300 before:bg-secondary before:top-1/2 before:-translate-y-1/2 before:transition-[left] before:duration-300"
+        class="flex justify-between relative cursor-pointer before:absolute before:z-0 before:inline-block before:w-1/2 before:h-full bg-base-100 before:top-1/2 before:-translate-y-1/2 before:transition-[left] before:duration-300"
         :class="{
           'before:left-1/2': switched && !isShrinkView,
-          'before:left-0': !switched,
+          'bg-accent-content before:bg-base-300': switched,
+          'bg-base-100 before:bg-base-300 before:left-0': !switched,
           'before:w-full': isShrinkView,
         }"
       >

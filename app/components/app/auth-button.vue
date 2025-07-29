@@ -5,7 +5,7 @@ const authStore = useAuthStore();
 <template>
   <button
     :disabled="authStore.loading"
-    class="btn bg-black text-white border-black"
+    class="btn bg-primary text-primary-content"
     @click="authStore.loginWithGoogle"
   >
     <span v-if="authStore.loading" class="loading loading-spinner loading-md" />
