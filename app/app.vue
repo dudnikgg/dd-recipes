@@ -3,9 +3,9 @@ import { Analytics } from "@vercel/analytics/nuxt";
 </script>
 
 <template>
-  <Analytics />
-
   <NuxtLayout>
+    <Analytics />
+
     <NuxtPage />
   </NuxtLayout>
 </template>
